@@ -1,0 +1,136 @@
+授权
+用户登录后 可能会根据用户当前的身份进行角色划分 比如我们最常用的qq 一个qq群里面 有群主 管理员和普通群成员三种角色 其中具有最高权限
+群主可以管理整个群的任何板块 并且具有解散和升级群的资格 而管理员只有群主的一部分权限 只能用于日常管理 普通群成员则只能进行最后基本的聊天操作
+
+对于我们来说 用户的一个操作实际上就是在访问我们提供的接口(编写的对应访问路径的Servlet) 比如登录 就需要调用/login接口 退出登录就要调用/logout接口
+而我们之前的图书管理系统中 新增图书 删除图书 所有的操作都有着对应的Servlet来进行处理 因此 从我们开发者角度来说 决定用户是否使用某个功能 只需要决定用户是否能够访问对应的Servlet即可
+
+我们可以大致像下面这样进行划分:
+    > 群主 /login /logout /chat /edit /delete /upgrade
+    > 管理员 /login /logout /chat /edit
+    > 普通群成员 /login /logout /chat
+
+也就是说 我们需要做的就是指定哪些请求可以由哪些用户发起
+
+SpringSecurity为我们提供了两种授权方式:
+    > 基于权限的授权 只要拥有某权限的用户 就可以访问某个路径
+    > 基于角色的授权 根据用户属于哪个角色来决定是否可以访问某个路径
+
+两者只是概念上的不同 实际上使用起来效果差不多 这里我们就先演示以角色方式来进行授权
+
+基于角色的授权
+现在我们希望创建两个角色 普通用户和管理员 普通用户只能访问index页面 而管理员可以访问任何页面
+
+首先我们需要对数据库中的角色表进行一些修改 添加一个用户角色字段 并创建一个新的用户 Test用户的角色为user 而Admin用户的角色为admin
+
+接着我们需要配置SpringSecurity 决定哪些角色可以访问哪些页面:
+                    http
+                            .authorizeRequests()
+                            .antMatchers("/static/**").permitAll()
+                            .antMatchers("/index").hasAnyRole("user", "admin") // index页面可以由user或admin访问
+                            .anyRequest().hasRole("admin") // 除了上面以外的所有内容 只能admin访问
+
+接着我们需要稍微修改一下验证逻辑 首先篡创建一个实体类用于表示数据库中的用户名 密码和角色:
+                    @Data
+                    public class AuthUser {
+                        String username;
+                        String password;
+                        String role;
+                    }
+
+接着修改一下Mapper:
+                    @Mapper
+                    public interface UserMapper {
+
+                        @Select("select * from user where username = #{username}")
+                        AuthUser getPasswordByUsername(String username);
+
+                    }
+
+最后再修改一下Service:
+                    @Override
+                    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+                        AuthUser user = mapper.getPasswordByUsername(s);
+
+                        if(user == null) throw new UsernameNotFoundException(" 登录失败 用户名或密码错误 ");
+                        return User
+                                  .withUsername(user.getUsername())
+                                  .password(user.getPassword())
+                                  .roles(user.getRole())
+                                  .build();
+                    }
+
+现在我们可以尝试登录 接着访问一下/index和/admin两个页面
+
+基于权限的授权
+基于权限的授权与角色类型 需要以hasAnyAuthority或hasAuthority进行判断:
+                    .anyRequest().hasAnyAuthority("page:index")
+
+                    @Override
+                    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+                        AuthUser user = mapper.getPasswordByUsername(s);
+
+                        if(user == null) throw new UsernameNotFoundException(" 登录失败 用户名或密码错误 ");
+                        return User
+                                  .withUsername(user.getUsername())
+                                  .password(user.getPassword())
+                                  .authorities("page:index")
+                                  .build();
+                    }
+
+使用注解判断权限
+除了直接配置以为 我买还可以以注解形式直接配置 首先需要在配置类(注意: 这里是在Mvc的配置类上添加 因为这里只针对Controller进行过滤 所有的Controller是由Mvc配置类进行注册的
+如果需要为Service或其他Bean也启动权限判断 则需要在Security的配置类上添加)上开启:
+                    @EnableGlobalMethodSecurity(prePostEnable = true)
+                    public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+                    }
+
+接着我们可以直接在需要添加权限验证的请求映射上添加注解:
+                    @PreAuthorize("hasRole('user')") // 判断是否为user角色 只有此角色才可以访问
+                    @RequestMapping("/index")
+                    public String index() {
+                        return "/index";
+                    }
+
+通过添加@PreAuthorize注解 在执行之前判断权限 如果没有对应的权限或是对应的角色 将无法访问页面
+
+这里其实是使用了SpEL表达式 相当于可以执行一些逻辑再得到结果 而不是直接传值 官方文档地址: https://docs.spring.io/spring-framework/docs/5.2.13RELEASE/spring-framework-reference/core.html#expressions
+内容比较多 不是重点 这里就不再详细介绍了
+
+同样的还有@PostAuthorize注解 但是它是在方法执行之后进行拦截:
+                    @Service
+                    public class UserService {
+
+                        @PostAuthorize("hasRole('user')")
+                        public String index() {
+                            System.out.println("成功执行");
+                        }
+
+                    }
+
+注意: Service是由根容器进行注册 需要在Security配置类是添加@EnableGlobalMethodSercurity注解才可以生效 与其有相同功能的还有@Sercure
+但是它不支持SpEL表达式的权限表示形式 并且需要添加"ROLE_"前缀 这里就不做演示了
+
+我们还可以使用@PreFilter和@PostFilter对集合类型的参数或返回值进行过滤 比如:
+                    @PreFilter("filterObject.equals('yxsnb')")
+                    public void test(List<String> list){
+                        System.out.println("成功执行" + list);
+                    }
+
+                    @RequestMapping("/index")
+                    public String index(){
+                        List<String> list = new LinedList<>();
+                        list.add("yxsnb");
+                        list.add("mitnb");
+                        service.test(list);
+                        return "/index";
+                    }
+
+与@PreFilter类似的@PostFilter这里就不做演示了 它用于处理返回值 使用方法是一样的
+
+当有多个集合时 需要使用filterTarget进行指定:
+                    @PreFilter("filterObject.equals('yxsnb')" filterTarget = "list2")
+                    public void test(List<String> list1, list<String> list2){
+                        System.out.println("成功执行" + list1);
+                    }

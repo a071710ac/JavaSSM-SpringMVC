@@ -1,0 +1,106 @@
+SpringSecurity认证
+
+直接认证
+既然我们的图书管理系统要求用户登录之后才能使用 所以我们首先要做的就是实现用户验证 我们需要进行一些配置:
+                    @Override
+                    protected void configure(AuthenticationMangerBuilder auth) throws Exception {
+                        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(); // 这里使用SpringSecurity提供的BCryptPasswordEncoder
+
+                        auth
+                                .inMemoryAuthentication() // 直接验证方式 之后会讲解使用数据库验证
+                                .passwordEncoder(encoder) // 密码加密器
+                                .withUser("test") // 用户名
+                                .password(encoder.encode("123456")) // 这里需要填写加密后的密码
+                                .roles("user"); // 用户的角色(之后讲解)
+                    }
+
+SpringSecurity的密码校验并不是直接使用原文件进行比较 而是使用加密算法将密码进行加密(更加准确的地说应该进行Hash处理 此过程是不可逆的 无法解密) 最后一将用户提供的密码以同样的方式加密后与密文进比较
+对于我们来说 用户提供的密码属于隐私信息 直接明文存储并不好 而且如果数据库内容被窃取 那么所有用户的密码将全部泄露 这是我们不希望看到的结果 我们需要一种即能隐藏用户密码也能完成认证的机制
+而Hash处理就是一种很好的解决方案 通过将用户的密码进行Hash值计算 计算出来的结果无法还原为原文 如果需要验证是否与此密码一致 那么需要以同样的方式加密再比较两个Hash值是否一种 这样就很好的保证了用户密码的安全性
+
+我们这里使用的是SpringSecurity提供的BCryptPasswordEncoder 至于加密过程 这里不做深入讲解
+
+现在 我们可以尝试使用此账号登录 在登录后 就可以随意访问我们的网站内容了
+
+使用数据库认证
+前面我们已经实现了直接认证的方式 那么如如何将其连接到数据库 通过查询数据库中的内容来进行用户登录呢
+
+首先我们需要将加密后的密码添加到数据库中作为用户密码:
+                    public class MainTest {
+
+                        @Test
+                        public void test(){
+                            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+                            System.out.println(encoder.encode("123456"));
+                        }
+
+                    }
+这里编写应该测试来完成
+
+然后我需要创建一个Service实现 实现的是UserDetailsService 它支持我们自己返回一个UserDetails对象 我们只需要直接返回一个包括数据库中的用户名 密码等信息的UserDetails即可 SpringSecurity会自动进行比对
+                    @Service
+                    public class UserAuthService implements UserDetailsService {
+
+                        @Resource
+                        UserMapper mapper;
+
+                        @Override
+                        public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+                            String password = mapper.getPasswordByUsername(s);
+
+                            if(password == null) throw new UsernameNotFoundException();
+                            return User // 这里需要返回UserDetails. springSecurity会根据给定的信息进行比对
+                                      .withUsername(s);
+                                      .password(password) // 直接从数据库取的密码
+                                      .roles("user") // 用户角色
+                                      .build();
+                        }
+
+                    }
+
+别忘了在配置类中进行扫描 将其注册为Bean 接着我们需要编写一个Mapper用于和数据库交互:
+                    @Mapper
+                    public interface UserMapper {
+
+                        @Select(" select * password from user where username #{username}")
+                        String getPasswordByUsername(String username);
+
+                    }
+
+和之前一样 配置一下Mybatis和数据库:
+                    @ComponentScans({
+                        @ComponentScan("book.manager.service")
+                    })
+                    @MapperScan()
+                    @Configuration
+                    public class RootConfiguration {
+
+                        @Bean
+                        public DataSource dataSource(){
+                            HikariDataSource dataSource = new HikariDataSource();
+                            dataSource.setJdbcUrl("jdbc:mysql://localhost:3306/study");
+                            dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+                            dataSource.setUsername("root");
+                            dataSource.setPassword("123456");
+                            return dataSource;
+                        }
+
+                        @Bean
+                        public SqlSessionFactoryBean sqlSessionFactoryBean(@Autowired DataSource dataSource){
+                            SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
+                            bean.setDataSource(dataSource);
+                            return bean;
+                        }
+
+                    }
+
+最后在修改一下Security配置:
+                    @Override
+                    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+                        auth
+                            .userDetailsService(service) // 使用自定义的Service实现类进行验证
+                            .passwordEncoder(new BCryptPasswordEncoder()); // 依然使用BCryptPasswordEncoder
+                    }
+
+这样登录就会从数据库中进行查询
+

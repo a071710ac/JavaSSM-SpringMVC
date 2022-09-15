@@ -1,0 +1,74 @@
+SecurityContext
+用户登录之后 怎么获取当前已经登录用户的信息呢 通过使用SecurityContextHolder就可以很方便地得到SecurityContext对象了
+
+我们可以直接使用SecurityContext对象来获取当前的认证信息:
+                    @RequestMapping("/index")
+                    public String index(){
+                        SecurityContext context = SecurityCContextHolder.getContext();
+                        Authentication authentication = context.getAuthentication();
+                        User user = (User) authentication.getPrincipal();
+                        System.out.println(user.getUsername());
+                        System.out.println(user.getAuthorities());
+                        return "/index";
+                    }
+
+通过SecurityContext我们就可以快速获取当前用户的名称和授权信息等
+
+除了这种方式以外 我们还可以直接从Session中获取:
+                    @RequestMapping("/index")
+                    public String index(@SessionAttribute("SPRING_SECURITY_CONTEXT") SecurityContext context){
+                        Authentication authentication = context.getAuthentication();
+                        User user = (User) authentication.getPrincipal();
+                        System.out.println(user.getUsername());
+                        System.out.println(user.getAuthorities());
+                        return "/index";
+                    }
+
+注意: SecurityContextHolder是有一定的存储策略的 SecurityContextHolder中的SecurityContext对象会在一开始请求到来时被设定
+至于存储方式其实是由存储策略决定的 如果我们这样编写 那么在默认情况下是无法获取到认证信息的:
+                    @RequestMapping("/index")
+                    public String index(){
+                        new Thread((() -> { // 创建一个子线程去获取
+                            SecurityContext context = SecurityContextHolder.getContext();
+                            Authentication authentication = context.getAuthentication();
+                            User user = (User) authentication.getPrincipal(); // NPE
+                            System.out.println(user.getUsername());
+                            System.out.println(user.getAuthorities());
+                        }).start();
+                        return "/index";
+                    }
+
+这里因为SecurityContextHolder的存储策略默认是MODE_THREADLOCAL 它是基于ThreadLocal实现的 getContext()方法本质上调用的是对应的存储策略实现发方法:
+                    public static SecurityContext getContext(){
+                        return strategy.getContext();
+                    }
+
+SecurityContextHolderStrategy有三个实现类:
+    > GlobalSecurityContextHolderStrategy 全局模式 不常用
+    > ThreadLocalSecurity 基于ThreadLocal实现 线程内可见
+    > InheritableThreadLocalSecurityContextHolderStrategy 基于InheritableThreadLocal实现 线程和子线程可见
+
+因此 如果上述情况需要在子线程中获取 那么需要修改SecurityContextHolder的存储策略 在初始化的时候设置:
+                    @PostConstruct
+                    public void init(){
+                        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+                    }
+
+这样在子线程中也可以获取认证信息了
+
+英文用户的验证信息是基于SecurityContext进行判断的 我们可以直接修改SecurityContext的内容 来手动为用户进行登录:
+                    @RequestMapping("/auth")
+                    @ResponseBody
+                    public String auth(){
+                        SecurityContext context = SecurityContextHolder.getContext(); // 获取SecurityContext对象(当前会话肯定是没有登录的)
+                        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken("Test", null,
+                                AuthorityUtils.commaSeparatedStringToAuthorityLis("ROLE_user")); // 手动创建一个UsernamePasswordAuthenticationToken对象 也就是用户的认证信息 角色需要添加ROLE_前缀 权限直接写
+                        context.setAuthentication(token);
+                        return " Login success! ";
+                    }
+
+在未登录的情况下 访问此地址将直接进行手动登录 再次访问/index页面 可以直接访问 说明手动设置认证信息成功
+
+疑惑: SecurityContext这玩意不是默认线程独占吗 那每次请求都是一个新的线程 按理说上一次的SecurityContext对象应该没了才对啊 为什么再次请求依然能够继续使用上一次SecurityContext中的认证信息呢
+
+SecurityContext的生命周期: 请求到来时从Session中取出 放入到SecurityHolder中 请求结束时从SecurityContextHolder取出 并放到Session中 实际上就是依靠Session来存储的 一旦会话过期认证信息也跟着消失

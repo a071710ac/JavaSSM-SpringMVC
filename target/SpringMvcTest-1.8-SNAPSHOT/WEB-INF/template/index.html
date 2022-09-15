@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script th:src="@{/static/test.js}"></script>
+</head>
+<body>
+    <div>
+        你好:
+        <span id="username"></span>
+        您的密码是:
+        <span id="password"></span>
+        <input type="button" value="点我更新页面数据" onclick="updateData()"/>
+        <input type="button" value="点我发送页面数据(表单)" onclick="submitData1()"/>
+        <input type="button" value="点我发送页面数据(JSON)" onclick="submitData2()"/>
+    </div>
+    <br>
+    <div>
+        <form action="upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="file">
+            <input type="submit">
+            <br>
+            <a href="/download" download="test.jpg">下载最新资源</a>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,80 @@
+自定义登录界面和登出
+前面我们已经了解了如何实现数据库权限验证 那么现在我们接着来看看 如何将登录页面修改为我们自定义的样式
+
+首先我们要了解一下SpringSecurity是如何进行登录验证的 我们可以观察一下默认的登录界面中 表单内有哪些内容:
+                    <div>
+                        <form class="form-signin" method="post" action="/book_manager/login">
+                            <h2 class="form-signin-heading">Please sign in</h2>
+                            <p>
+                                <label for="username" class="sr-only">Username</label>
+                                <input type="text" id="username" name="username" class="form-control" placeholder="Username" required="" autofocus="">
+                            </p>
+                            <p>
+                                <label for="password" class="sr-only">Password</label>
+                                <input type="password" id="password" name="password" class="form-control" placeholder="Password" required="">
+                            </p>
+                            <input name="_csrf" type="hidden" value="83421936-b84b-44e3-de47-58bb2c12571a">
+                            <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+                        <form>
+                    </div>
+
+我们发现 首先有一个用户名的输入框和一个密码的输入框 我们需要妻子填写用户名和密码 但是我们发现 除了这两个输入框以外 还有一个input标签 它是隐藏的 并且它存储了一串类似于Hash值的东西
+名称为"_csrf" 其实看名字就知道 这玩意八成是为了防止CSRF攻击而存在的
+
+从Spring Security 4.0开始 默认情况下会自动启用CSRF攻击应用程序 Spring SecurityCSRF会针对对PATCH POST PUT和DELETE方法的请求(不仅仅只是登录请求 这里指的是任何请求路径) 进行防护
+这里的登录表单正好是一个POST类型的请求 在默认配置下 无论是否登录 页面中只要发起了PATCH POST PUT和DELETE请求一定会被拒绝 并返回403错误(注意: 这里是个究极大坑) 需要在请求的时候加入csrfToken才行
+也就是"83421936-b84b-44e3-de47-58bb2c12571a" 正是csrfToken 如果提交的是表单类型的数据 那么表单中必须包含此Token字符串 键名称为"_csrf" 如果是JSON数据格式发送的 那么就需要在请求头中包含此Token字符串
+
+综上所述 我们最后提交的登录表单 除了必须的用户名和密码 还包含了一个csrfToken字符串用于验证 防止攻击
+
+因此 我们在编写自己的登录页面时 需要添加这样一个输入框:
+                    <input type="text" th:name="${_csrf.getParameterName()} th:value="${_csrf.token}" hidden>
+
+隐藏即可 但是必须要有 而Token的键名称和Token字符串可以通过Thymeleaf从Model中获取 SpringSecurity会自动将Token信息添加到Model中
+
+接着我们就可以将我们自己的页面替换掉默认的页面了 我们需要重写另一个方法来实现:
+                    @Override
+                    protected void configure(HHttpSecurity http) throws Exception{
+                        http
+                            .authorizeRequests() // 首先需要配置哪些请求会被拦截 哪些请求必须具有扫描角色才能访问
+                            .antMatchers("/static/**").permitAll() // 静态资源 使用permitAll来运行任何人访问(注意: 一定要放在前面)
+                            .antMatchers("/**").hasRole("user") // 所有请求必须登录并且是user角色才可以访问(不包含上面的静态资源)
+                    }
+
+首先我们需要配置拦截规则 也就是当用户未登录时 哪些路径可以访问 哪些路径不可以访问 如果不可以访问 那么会被自动重定向到登录页面
+
+接着我们需要配置表单登录和登录页面:
+                    .formLogin() // 配置Form表单登录
+                    .loginPage("/login") // 登录页面地址(GET)
+                    .loginProcessingUrl("/doLogin") // form表单提交地址(POST)
+                    .defaultSuccessUrl("/index") // 登陆成功后跳转的页面 也可以通过Handler实现高度自定义
+                    .permitAll() // 登录页面也需要允许所有人访问
+
+需要配置登录页面的地址和登录请求发送的地址 这里登录页面填写为/login 登录请求地址为/doLogin 登录页面需要我们自己去编写Controller来实现
+登录请求提交处理由SpringSecurity提供 只需要写路径就可以了
+                    @RequestMopping("/login")
+                    public String login(){
+                        return "/login";
+                    }
+
+配置好后 我们还需要配置一下退出登录操作:
+                    .and()
+                    .logout()
+                    .logoutUrl("/logout") // 退出登录的请求地址
+                    .logoutSuccessUrl("/login") // 退出后重定向的地址
+
+注意: 这里的退出登录请求也必须是POST请求方式(应为开启了CSRF防护 需要添加Token) 否则无法访问 这里主页面就这样写:
+                    <body>
+                        <form action="logout" method="post">
+                            <input type="text" th:name="${_csrf.getParameterName()} th:value="${_csrf.token}" hidden>
+                            <button>退出登录</button>
+                        </form>
+                    </body>
+
+登录成功后 点击退出登录按钮 就可以成功退出并回到登录界面了
+
+由于我们在学习的过程中暂时用不到CSRF防护 因此可以将其关闭 这样直接使用get请求也可以退出登录 并且登录请求中无需再携带Token了 推荐关闭 因为不关闭后可能会因为没考虑CSRF防护而遇到一连串的问题:
+                    .and()
+                    .csrf().disable();
+
+这样就可以直接关闭此功能了 但是注意 这样将会导致您的Web网站存在完全漏洞 (这里为了之后省事 就关闭保护了 但是一定要记得在不关闭的情况下需要携带Token访问)
