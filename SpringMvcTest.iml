@@ -29,6 +29,12 @@
         <fileset id="fileset4" name="MainInitializer" removed="false">
           <file>file://$MODULE_DIR$/src/main/java/SpringMVC/mvcController/config/MainInitializer.java</file>
         </fileset>
+        <fileset id="fileset5" name="WebConfiguration (3)" removed="false">
+          <file>file://$MODULE_DIR$/src/main/java/SpringMVC/reqParamAndreqHeaderDetails/config/WebConfiguration.java</file>
+        </fileset>
+        <fileset id="fileset6" name="WebConfiguration (4)" removed="false">
+          <file>file://$MODULE_DIR$/src/main/java/SpringMVC/cookieValueAndsessionAttrbutieDetails/config/WebConfiguration.java</file>
+        </fileset>
       </configuration>
     </facet>
   </component>

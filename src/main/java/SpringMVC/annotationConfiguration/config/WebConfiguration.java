@@ -11,11 +11,11 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
  * @Desription:
  * @date 2023/3/9 1:44
  */
-@Configuration
+/*@Configuration
 @EnableWebMvc
 @ComponentScan("SpringMVC.annotationConfiguration.controller")
 public class WebConfiguration {
 
 
 
-}
+}*/
