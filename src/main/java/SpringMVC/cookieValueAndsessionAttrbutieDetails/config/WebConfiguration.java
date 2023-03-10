@@ -19,7 +19,7 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
  * @Desription:
  * @date 2023/3/10 9:16
  */
-@Configuration
+/*@Configuration
 @EnableWebMvc
 @ComponentScan("SpringMVC.cookieValueAndsessionAttrbutieDetails.controller")
 public class WebConfiguration implements WebMvcConfigurer {
@@ -27,23 +27,23 @@ public class WebConfiguration implements WebMvcConfigurer {
     @Bean
     public ThymeleafViewResolver thymeleafViewResolver(SpringTemplateEngine springTemplateEngine) {
 
-        ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
-        viewResolver.setOrder(1);
-        viewResolver.setCharacterEncoding("UTF-8");
-        viewResolver.setTemplateEngine(springTemplateEngine);
-        return viewResolver;
+        ThymeleafViewResolver resolver = new ThymeleafViewResolver();
+        resolver.setOrder(1);
+        resolver.setCharacterEncoding("UTF-8");
+        resolver.setTemplateEngine(springTemplateEngine);
+        return resolver;
 
     }
     @Bean
-    public SpringTemplateEngine springTemplateEngine(ITemplateResolver resolver) {
+    public SpringTemplateEngine templateEngine(ITemplateResolver resolver) {
 
         SpringTemplateEngine engine = new SpringTemplateEngine();
         engine.setTemplateResolver(resolver);
-        return null;
+        return engine;
 
     }
     @Bean
-    public SpringResourceTemplateResolver springResourceTemplateResolver() {
+    public SpringResourceTemplateResolver templateResolver() {
 
         SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
         resolver.setSuffix(".html");
@@ -62,4 +62,4 @@ public class WebConfiguration implements WebMvcConfigurer {
         registry.addResourceHandler("/static/**").addResourceLocations("/static/");
     }
 
-}
+}*/

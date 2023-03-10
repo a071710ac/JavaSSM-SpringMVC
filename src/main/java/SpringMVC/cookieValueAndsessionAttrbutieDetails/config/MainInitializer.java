@@ -1,7 +1,6 @@
 package SpringMVC.cookieValueAndsessionAttrbutieDetails.config;
 
 import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletException;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
@@ -13,10 +12,10 @@ import org.springframework.web.servlet.DispatcherServlet;
  * @Desription:
  * @date 2023/3/10 9:16
  */
-public class MainInitializer implements WebApplicationInitializer {
+/*public class MainInitializer implements WebApplicationInitializer {
 
     @Override
-    public void onStartup(ServletContext servletContext) throws ServletException {
+    public void onStartup(ServletContext servletContext) {
 
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
         context.register(WebConfiguration.class);
@@ -28,4 +27,4 @@ public class MainInitializer implements WebApplicationInitializer {
 
     }
 
-}
+}*/

@@ -1,7 +1,6 @@
 package SpringMVC.reqParamAndreqHeaderDetails.config;
 
 import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletException;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
@@ -16,7 +15,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 /*public class MainInitializer implements WebApplicationInitializer {
 
     @Override
-    public void onStartup(ServletContext servletContext) throws ServletException {
+    public void onStartup(ServletContext servletContext) {
 
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
         context.register(WebConfiguration.class);
