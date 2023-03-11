@@ -39,6 +39,9 @@
         <fileset id="fileset7" name="WebConfiguration (5)" removed="false">
           <file>file://$MODULE_DIR$/src/main/java/SpringMVC/RedirectionAndForwarding/config/WebConfiguration.java</file>
         </fileset>
+        <fileset id="fileset8" name="WebConfiguration (6)" removed="false">
+          <file>file://$MODULE_DIR$/src/main/java/SpringMVC/restFul/config/WebConfiguration.java</file>
+        </fileset>
       </configuration>
     </facet>
   </component>
@@ -69,6 +72,7 @@
     <orderEntry type="library" name="Maven: io.micrometer:micrometer-observation:1.10.3" level="project" />
     <orderEntry type="library" name="Maven: io.micrometer:micrometer-commons:1.10.3" level="project" />
     <orderEntry type="library" name="Maven: jakarta.servlet:jakarta.servlet-api:5.0.0" level="project" />
+    <orderEntry type="library" name="Maven: jakarta.annotation:jakarta.annotation-api:2.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.thymeleaf:thymeleaf-spring6:3.1.1.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.thymeleaf:thymeleaf:3.1.1.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.attoparser:attoparser:2.0.6.RELEASE" level="project" />
