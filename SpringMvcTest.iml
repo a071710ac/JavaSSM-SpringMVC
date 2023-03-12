@@ -42,6 +42,9 @@
         <fileset id="fileset8" name="WebConfiguration (6)" removed="false">
           <file>file://$MODULE_DIR$/src/main/java/SpringMVC/restFul/config/WebConfiguration.java</file>
         </fileset>
+        <fileset id="fileset9" name="WebConfiguration (7)" removed="false">
+          <file>file://$MODULE_DIR$/src/main/java/SpringMVC/interceptor/config/WebConfiguration.java</file>
+        </fileset>
       </configuration>
     </facet>
   </component>

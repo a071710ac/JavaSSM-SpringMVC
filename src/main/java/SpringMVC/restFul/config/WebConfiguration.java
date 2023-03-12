@@ -19,7 +19,7 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
  * @Desription:
  * @date 2023/3/11 10:41
  */
-@Configuration
+/*@Configuration
 @EnableWebMvc
 @ComponentScan("SpringMVC.restFul.controller")
 public class WebConfiguration implements WebMvcConfigurer {
@@ -62,4 +62,4 @@ public class WebConfiguration implements WebMvcConfigurer {
         registry.addResourceHandler("/static/**").addResourceLocations("/static/");
     }
 
-}
+}*/

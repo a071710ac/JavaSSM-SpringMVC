@@ -12,7 +12,7 @@ import org.springframework.web.servlet.DispatcherServlet;
  * @Desription:
  * @date 2023/3/11 10:40
  */
-public class MainInitializer implements WebApplicationInitializer {
+/*public class MainInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(ServletContext servletContext) {
@@ -27,4 +27,4 @@ public class MainInitializer implements WebApplicationInitializer {
 
     }
 
-}
+}*/
