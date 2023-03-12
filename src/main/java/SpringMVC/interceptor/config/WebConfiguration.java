@@ -16,7 +16,7 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
  * @Desription:
  * @date 2023/3/12 16:12
  */
-@Configuration
+/*@Configuration
 @EnableWebMvc
 @ComponentScan("SpringMVC.interceptor.controller")
 public class WebConfiguration implements WebMvcConfigurer {
@@ -56,6 +56,10 @@ public class WebConfiguration implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 .excludePathPatterns("/home");
 
+        registry
+                .addInterceptor(new SubInterceptor())
+                .addPathPatterns("/**");
+
     }
 
     @Override
@@ -68,4 +72,4 @@ public class WebConfiguration implements WebMvcConfigurer {
         registry.addResourceHandler("/static/**").addResourceLocations("/static/");
     }
 
-}
+}*/

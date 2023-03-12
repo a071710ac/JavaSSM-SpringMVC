@@ -45,6 +45,12 @@
         <fileset id="fileset9" name="WebConfiguration (7)" removed="false">
           <file>file://$MODULE_DIR$/src/main/java/SpringMVC/interceptor/config/WebConfiguration.java</file>
         </fileset>
+        <fileset id="fileset10" name="WebConfiguration (8)" removed="false">
+          <file>file://$MODULE_DIR$/src/main/java/SpringMVC/exceptionHandling/config/WebConfiguration.java</file>
+        </fileset>
+        <fileset id="fileset11" name="WebConfiguration (9)" removed="false">
+          <file>file://$MODULE_DIR$/src/main/java/SpringMVC/jsonAndAjax/config/WebConfiguration.java</file>
+        </fileset>
       </configuration>
     </facet>
   </component>
@@ -82,5 +88,6 @@
     <orderEntry type="library" name="Maven: org.unbescape:unbescape:1.1.6.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:2.0.5" level="project" />
     <orderEntry type="library" name="Maven: org.projectlombok:lombok:1.18.24" level="project" />
+    <orderEntry type="library" name="Maven: com.alibaba:fastjson:1.2.78" level="project" />
   </component>
 </module>
