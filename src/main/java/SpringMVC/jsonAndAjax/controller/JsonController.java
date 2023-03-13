@@ -25,7 +25,7 @@ public class JsonController {
         object.put("name", "杰哥");
         object.put("age", 18);
         System.out.println(object.toJSONString());
-        return "index";
+        return "test1/index";
 
     }
 
@@ -38,7 +38,7 @@ public class JsonController {
         object.put("age", 18);
         array.add(object);
         System.out.println(array.toJSONString());
-        return "index";
+        return "test1/index";
 
     }
 
@@ -54,7 +54,7 @@ public class JsonController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "index4", produces = "application/json")
+    @RequestMapping(value = "/index4", produces = "application/json")
     public Student index4() {
 
         Student student = new Student();

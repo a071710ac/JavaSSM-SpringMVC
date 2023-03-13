@@ -17,7 +17,7 @@ public class HelloController {
     public String index1() {
 
         System.out.println("我是处理");
-        return "index";
+        return "test1/index";
 
     }
 
@@ -26,7 +26,7 @@ public class HelloController {
 
         System.out.println("我是处理");
         if (true) throw new RuntimeException("");
-        return "index";
+        return "test1/index";
 
     }
 

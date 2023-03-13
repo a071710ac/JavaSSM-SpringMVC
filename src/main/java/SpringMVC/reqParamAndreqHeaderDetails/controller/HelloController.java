@@ -22,7 +22,7 @@ public class HelloController {
     public ModelAndView index1(@RequestParam("username") String username) {
 
         System.out.println("接收到请求参数: " + username);
-        return new ModelAndView("index");
+        return new ModelAndView("test1/index");
 
     }
 
@@ -30,7 +30,7 @@ public class HelloController {
     public ModelAndView index2(@RequestParam(value = "username", required = false) String username) {
 
         System.out.println("接收到请求参数: " + username);
-        return new ModelAndView("index");
+        return new ModelAndView("test1/index");
 
     }
 
@@ -38,7 +38,7 @@ public class HelloController {
     public ModelAndView index3(@RequestParam(value = "username", required = false, defaultValue = "Coke") String username) {
 
         System.out.println("接收到请求参数: " + username);
-        return new ModelAndView("index");
+        return new ModelAndView("test1/index");
 
     }
 
@@ -46,7 +46,7 @@ public class HelloController {
     public ModelAndView index4(HttpServletRequest request) {
 
         System.out.println("接收到请求参数: " + request.getParameterMap().keySet());
-        return new ModelAndView("index");
+        return new ModelAndView("test1/index");
 
     }
 
@@ -55,7 +55,7 @@ public class HelloController {
 
         System.out.println(session.getAttribute("test"));
         session.setAttribute("test", "鸡你太美");
-        return new ModelAndView("index");
+        return new ModelAndView("test1/index");
 
     }
 
@@ -63,7 +63,7 @@ public class HelloController {
     public ModelAndView index6(User user) {
 
         System.out.println("获取到cookie值为: " + user);
-        return new ModelAndView("index");
+        return new ModelAndView("test1/index");
 
     }
 

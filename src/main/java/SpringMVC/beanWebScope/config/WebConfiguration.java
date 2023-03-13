@@ -2,6 +2,7 @@ package SpringMVC.beanWebScope.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ComponentScans;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -14,7 +15,7 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 
 /**
  * @author YXS
- * @PackageName: SpringMVC.BeanWebScope.config
+ * @PackageName: SpringMVC.beanWebScope.config
  * @ClassName: WebConfiguration
  * @Desription:
  * @date 2023/3/10 16:35

@@ -11,6 +11,7 @@ import org.springframework.web.context.annotation.RequestScope;
  * @Desription:
  * @date 2023/3/10 17:12
  */
+@Component
 public class TestBean {
 
     @Bean

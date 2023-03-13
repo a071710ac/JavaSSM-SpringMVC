@@ -17,13 +17,13 @@ public class HelloController {
 
     @RequestMapping("/index1")
     public ModelAndView index1() {
-        return new ModelAndView("index");
+        return new ModelAndView("test1/index");
     }
 
     @RequestMapping("/index2")
     public ModelAndView index2() {
 
-        ModelAndView modelAndView = new ModelAndView("index");
+        ModelAndView modelAndView = new ModelAndView("test1/index");
         modelAndView.getModel().put("name", "啊这");
         return modelAndView;
 
@@ -33,7 +33,7 @@ public class HelloController {
     public String index3(Model model) {
 
         model.addAttribute("name", "yyds");
-        return "index";
+        return "test1/index";
 
     }
 

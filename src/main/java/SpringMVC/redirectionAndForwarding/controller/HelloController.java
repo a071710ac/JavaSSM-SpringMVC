@@ -19,7 +19,7 @@ public class HelloController {
     }
     @RequestMapping("/home1")
     public String home1() {
-        return "home";
+        return "test1/home";
     }
 
     @RequestMapping("/index2")
@@ -28,7 +28,7 @@ public class HelloController {
     }
     @RequestMapping("/home2")
     public String home2() {
-        return "home";
+        return "test1/home";
     }
 
 }

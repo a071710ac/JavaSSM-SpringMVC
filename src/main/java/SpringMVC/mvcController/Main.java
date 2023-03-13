@@ -99,7 +99,7 @@ package SpringMVC.mvcController;
  *                  <head>
  *                      <meta charset="UTF-8">
  *                      <title>Title</title>
- *                      <script src="static/test.js"></script>
+ *                      <script src="static/test1.js"></script>
  *                  </head>
  *                  <body>
  *                      HelloWorld！
@@ -150,7 +150,7 @@ package SpringMVC.mvcController;
  *                      <meta charset="UTF-8">
  *                      <title>测试</title>
  *                      <!-- 引用静态资源 这里使用Thymeleaf的网址链接表达式 Thymeleaf会自动添加web应用程序的名称到链接前面 -->
- *                      <script th:src="@{/static/test.js}"></script>
+ *                      <script th:src="@{/static/test1.js}"></script>
  *                  </head>
  *                  <body>
  *                      <p>欢迎来到GayHub全球最大同性交友网站</p>

@@ -25,7 +25,7 @@ public class HelloController {
 
         System.out.println("获取到cookie值为: " + test);
         response.addCookie(new Cookie("test", "yxs"));
-        return new ModelAndView("index");
+        return new ModelAndView("test1/index");
 
     }
 
@@ -35,7 +35,7 @@ public class HelloController {
 
         session.setAttribute("test", "yxs");
         System.out.println(test);
-        return new ModelAndView("index");
+        return new ModelAndView("test1/index");
 
     }
 

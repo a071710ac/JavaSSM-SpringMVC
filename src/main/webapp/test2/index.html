@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>home</title>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script th:src="@{/static/test2.js}"></script>
+
+</head>
+
+<body>
+
+  你好 <span id="name"></span>
+  你的年您是: <span id="age"></span>
+
+  <br>
+  <br>
+
+  <button onclick="updateData()">点我更新页面数据</button>
+
+  <br>
+  <br>
+
+  <button onclick="submitData()">点我发送表单数据</button>
+
+  <br>
+  <br>
+
+  <button onclick="submitAjaxData()">点我发送JSON数据</button>
+
+</body>
+
+</html>

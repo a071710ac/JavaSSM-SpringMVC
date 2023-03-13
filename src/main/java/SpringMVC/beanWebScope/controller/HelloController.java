@@ -2,6 +2,7 @@ package SpringMVC.beanWebScope.controller;
 
 import SpringMVC.beanWebScope.test.TestBean;
 import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -16,14 +17,14 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class HelloController {
 
-    @Resource
-    TestBean bean;
+//    @Autowired
+//    TestBean bean;
 
     @RequestMapping(value = "/index")
     public ModelAndView index() {
 
-        System.out.println(bean);
-        return new ModelAndView("index");
+        System.out.println("yxs");
+        return new ModelAndView("test1/index");
 
     }
 

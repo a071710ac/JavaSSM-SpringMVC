@@ -18,7 +18,7 @@ public class HelloController {
 
         System.out.println();
         if (true) throw new RuntimeException("你的氪金力度不足 无法访问");
-        return "index";
+        return "test1/index";
 
     }
 
